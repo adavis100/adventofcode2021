@@ -2,16 +2,14 @@ package main
 
 import (
 	"fmt"
+	"github.com/adavis100/aoc/utils"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
-	"strconv"
-	"strings"
 )
 
 func Solve(r io.Reader, days int) uint64 {
-	fish := parseInput(r)
+	fish := bucketNums(utils.LoadIntList(r))
 	for i := 0; i < days; i++ {
 		next := make([]uint64, 9)
 		for i := 0; i < 9; i++ {
@@ -32,17 +30,9 @@ func Solve(r io.Reader, days int) uint64 {
 	return count
 }
 
-func parseInput(r io.Reader) []uint64 {
-	s, err := ioutil.ReadAll(r)
-	if err != nil {
-		log.Fatal(err)
-	}
+func bucketNums(l []int) []uint64 {
 	nums := make([]uint64, 9)
-	for _, numStr := range strings.Split(string(s), ",") {
-		n, err := strconv.Atoi(numStr)
-		if err != nil {
-			log.Fatal(err)
-		}
+	for _, n := range l {
 		nums[n]++
 	}
 	return nums
