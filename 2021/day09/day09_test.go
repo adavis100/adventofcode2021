@@ -42,3 +42,14 @@ func TestSolve1(t *testing.T) {
 	count := Solve1(strings.NewReader(in))
 	assert.Equal(t, 15, count)
 }
+
+func TestCountsBasin(t *testing.T) {
+	grid := buildGrid(strings.NewReader(in))
+	count := countBasin(0, 9, grid)
+	assert.Equal(t, 9, count)
+}
+
+func TestSolve2(t *testing.T) {
+	count := Solve2(strings.NewReader(in))
+	assert.Equal(t, 1134, count)
+}
