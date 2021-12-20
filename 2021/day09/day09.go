@@ -1,14 +1,12 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
+	"github.com/adavis100/aoc/utils"
 	"io"
 	"log"
 	"os"
 	"sort"
-	"strconv"
-	"strings"
 )
 
 type coord struct {
@@ -33,27 +31,8 @@ func getNeighbors(r, c int, grid [][]int) []coord {
 	return neighbors
 }
 
-func buildGrid(r io.Reader) [][]int {
-	scanner := bufio.NewScanner(r)
-	grid := make([][]int, 0)
-	for scanner.Scan() {
-		l := scanner.Text()
-		arr := strings.Split(l, "")
-		row := make([]int, 0)
-		for _, numStr := range arr {
-			n, err := strconv.Atoi(numStr)
-			if err != nil {
-				log.Fatal(err)
-			}
-			row = append(row, n)
-		}
-		grid = append(grid, row)
-	}
-	return grid
-}
-
 func Solve1(r io.Reader) int {
-	grid := buildGrid(r)
+	grid := utils.LoadGrid(r)
 	risk := 0
 	for i := 0; i < len(grid); i++ {
 		for j := 0; j < len(grid[i]); j++ {
@@ -76,7 +55,7 @@ func isLow(n int, neighbors []coord, grid [][]int) bool {
 }
 
 func Solve2(r io.Reader) int {
-	grid := buildGrid(r)
+	grid := utils.LoadGrid(r)
 	basins := make([]int, 0)
 
 	for i := 0; i < len(grid); i++ {
