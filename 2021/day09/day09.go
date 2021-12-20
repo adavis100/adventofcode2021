@@ -14,6 +14,32 @@ type coord struct {
 	c int
 }
 
+func main() {
+	file, err := os.Open("./2021/day09/input.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	fmt.Println(Solve1(file))
+	file.Seek(0, io.SeekStart)
+	fmt.Println(Solve2(file))
+}
+
+func Solve1(r io.Reader) int {
+	grid := utils.LoadGrid(r)
+	risk := 0
+	for i := 0; i < len(grid); i++ {
+		for j := 0; j < len(grid[i]); j++ {
+			neighbors := getNeighbors(i, j, grid)
+			if isLow(grid[i][j], neighbors, grid) {
+				risk += grid[i][j] + 1
+			}
+		}
+	}
+	return risk
+}
+
 func getNeighbors(r, c int, grid [][]int) []coord {
 	neighbors := make([]coord, 0)
 	if r > 0 {
@@ -29,20 +55,6 @@ func getNeighbors(r, c int, grid [][]int) []coord {
 		neighbors = append(neighbors, coord{r, c + 1})
 	}
 	return neighbors
-}
-
-func Solve1(r io.Reader) int {
-	grid := utils.LoadGrid(r)
-	risk := 0
-	for i := 0; i < len(grid); i++ {
-		for j := 0; j < len(grid[i]); j++ {
-			neighbors := getNeighbors(i, j, grid)
-			if isLow(grid[i][j], neighbors, grid) {
-				risk += grid[i][j] + 1
-			}
-		}
-	}
-	return risk
 }
 
 func isLow(n int, neighbors []coord, grid [][]int) bool {
@@ -89,16 +101,4 @@ func countBasin(r int, c int, grid [][]int) int {
 		}
 	}
 	return count
-}
-
-func main() {
-	file, err := os.Open("./2021/day09/input.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-
-	fmt.Println(Solve1(file))
-	file.Seek(0, io.SeekStart)
-	fmt.Println(Solve2(file))
 }

@@ -30,32 +30,19 @@ func NewBoard(grid [][]int) Board {
 	return Board{nums, marked}
 }
 
-func IsWinner(b Board) bool {
-	for row := 0; row < 5; row++ {
-		win := true
-		for col := 0; col < 5; col++ {
-			if !b.marked[row][col] {
-				win = false
-				break
-			}
-		}
-		if win {
-			return true
-		}
+func main() {
+	file, err := os.Open("2021/day04/input.txt")
+	if err != nil {
+		log.Fatal(err)
 	}
-	for col := 0; col < 5; col++ {
-		win := true
-		for row := 0; row < 5; row++ {
-			if !b.marked[row][col] {
-				win = false
-				break
-			}
-		}
-		if win {
-			return true
-		}
-	}
-	return false
+	defer file.Close()
+	nums, boards := ReadInput(file)
+
+	fmt.Println(Run(nums, boards))
+
+	file.Seek(0, io.SeekStart)
+	nums, boards = ReadInput(file)
+	fmt.Println(RunPart2(nums, boards))
 }
 
 func ReadInput(r io.Reader) ([]int, []Board) {
@@ -92,18 +79,6 @@ func convertToNums(numsTxt []string) []int {
 	return nums
 }
 
-func getScore(b Board, n int) int {
-	sum := 0
-	for i := 0; i < 5; i++ {
-		for j := 0; j < 5; j++ {
-			if !b.marked[i][j] {
-				sum += b.nums[i][j]
-			}
-		}
-	}
-	return sum * n
-}
-
 func Run(nums []int, boards []Board) int {
 	winner := -1
 	for i := 0; i < len(nums) && winner < 0; i++ {
@@ -111,15 +86,6 @@ func Run(nums []int, boards []Board) int {
 		winner = getWinner(boards)
 		if winner >= 0 {
 			return getScore(boards[winner], nums[i])
-		}
-	}
-	return -1
-}
-
-func getWinner(boards []Board) int {
-	for i := 0; i < len(boards); i++ {
-		if IsWinner(boards[i]) {
-			return i
 		}
 	}
 	return -1
@@ -137,6 +103,55 @@ func mark(boards []Board, n int) {
 	}
 }
 
+func getWinner(boards []Board) int {
+	for i := 0; i < len(boards); i++ {
+		if IsWinner(boards[i]) {
+			return i
+		}
+	}
+	return -1
+}
+
+func IsWinner(b Board) bool {
+	for row := 0; row < 5; row++ {
+		win := true
+		for col := 0; col < 5; col++ {
+			if !b.marked[row][col] {
+				win = false
+				break
+			}
+		}
+		if win {
+			return true
+		}
+	}
+	for col := 0; col < 5; col++ {
+		win := true
+		for row := 0; row < 5; row++ {
+			if !b.marked[row][col] {
+				win = false
+				break
+			}
+		}
+		if win {
+			return true
+		}
+	}
+	return false
+}
+
+func getScore(b Board, n int) int {
+	sum := 0
+	for i := 0; i < 5; i++ {
+		for j := 0; j < 5; j++ {
+			if !b.marked[i][j] {
+				sum += b.nums[i][j]
+			}
+		}
+	}
+	return sum * n
+}
+
 func RunPart2(nums []int, boards []Board) int {
 
 	for i := 0; i < len(nums) && len(boards) > 0; i++ {
@@ -151,19 +166,4 @@ func RunPart2(nums []int, boards []Board) int {
 		}
 	}
 	return -1
-}
-
-func main() {
-	file, err := os.Open("2021/day04/input.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-	nums, boards := ReadInput(file)
-
-	fmt.Println(Run(nums, boards))
-
-	file.Seek(0, io.SeekStart)
-	nums, boards = ReadInput(file)
-	fmt.Println(RunPart2(nums, boards))
 }

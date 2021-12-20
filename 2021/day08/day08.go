@@ -11,6 +11,18 @@ import (
 	"strings"
 )
 
+func main() {
+	file, err := os.Open("./2021/day08/input.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	fmt.Println(countNums(file, true))
+	file.Seek(0, io.SeekStart)
+	fmt.Println(countNums(file, false))
+}
+
 func countNums(r io.Reader, onlyUnique bool) int {
 	scanner := bufio.NewScanner(r)
 	count := 0
@@ -132,16 +144,4 @@ func parseLine(l string) (signals []string, digits []string) {
 	signals = strings.Split(parts[0], " ")
 	digits = strings.Split(parts[1], " ")
 	return signals, digits
-}
-
-func main() {
-	file, err := os.Open("./2021/day08/input.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-
-	fmt.Println(countNums(file, true))
-	file.Seek(0, io.SeekStart)
-	fmt.Println(countNums(file, false))
 }

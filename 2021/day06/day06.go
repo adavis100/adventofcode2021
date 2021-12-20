@@ -8,6 +8,18 @@ import (
 	"os"
 )
 
+func main() {
+	file, err := os.Open("2021/day06/input.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	fmt.Println(Solve(file, 80))
+	file.Seek(0, io.SeekStart)
+	fmt.Println(Solve(file, 256))
+}
+
 func Solve(r io.Reader, days int) uint64 {
 	fish := bucketNums(utils.LoadIntList(r))
 	for i := 0; i < days; i++ {
@@ -36,16 +48,4 @@ func bucketNums(l []int) []uint64 {
 		nums[n]++
 	}
 	return nums
-}
-
-func main() {
-	file, err := os.Open("2021/day06/input.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-
-	fmt.Println(Solve(file, 80))
-	file.Seek(0, io.SeekStart)
-	fmt.Println(Solve(file, 256))
 }

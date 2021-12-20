@@ -20,6 +20,47 @@ type Line struct {
 	To   Coord
 }
 
+func main() {
+	file, err := os.Open("2021/day05/input.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	fmt.Println(Solve(file, false))
+	file.Seek(0, io.SeekStart)
+	fmt.Println(Solve(file, true))
+}
+
+func Solve(r io.Reader, includeDiag bool) int {
+	grid := makeGrid()
+	for _, l := range readLines(r) {
+		for _, coord := range getPointsInLine(l, includeDiag) {
+			grid[coord.X][coord.Y]++
+		}
+	}
+
+	return countOverlaps(grid)
+}
+
+func makeGrid() [][]int {
+	grid := make([][]int, 1000)
+	for i := 0; i < 1000; i++ {
+		grid[i] = make([]int, 1000)
+	}
+	return grid
+}
+
+func readLines(r io.Reader) []Line {
+	scanner := bufio.NewScanner(r)
+	lines := make([]Line, 0)
+	for scanner.Scan() {
+		line := scanner.Text()
+		lines = append(lines, parseLine(line))
+	}
+	return lines
+}
+
 func parseLine(s string) Line {
 	parts := strings.Split(s, " -> ")
 	part1 := strings.Split(parts[0], ",")
@@ -93,35 +134,6 @@ func isHoriontal(l Line) bool {
 	return l.From.Y == l.To.Y
 }
 
-func readLines(r io.Reader) []Line {
-	scanner := bufio.NewScanner(r)
-	lines := make([]Line, 0)
-	for scanner.Scan() {
-		line := scanner.Text()
-		lines = append(lines, parseLine(line))
-	}
-	return lines
-}
-
-func Solve(r io.Reader, includeDiag bool) int {
-	grid := makeGrid()
-	for _, l := range readLines(r) {
-		for _, coord := range getPointsInLine(l, includeDiag) {
-			grid[coord.X][coord.Y]++
-		}
-	}
-
-	return countOverlaps(grid)
-}
-
-func makeGrid() [][]int {
-	grid := make([][]int, 1000)
-	for i := 0; i < 1000; i++ {
-		grid[i] = make([]int, 1000)
-	}
-	return grid
-}
-
 func countOverlaps(grid [][]int) int {
 	count := 0
 	for i := 0; i < 1000; i++ {
@@ -132,16 +144,4 @@ func countOverlaps(grid [][]int) int {
 		}
 	}
 	return count
-}
-
-func main() {
-	file, err := os.Open("2021/day05/input.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-
-	fmt.Println(Solve(file, false))
-	file.Seek(0, io.SeekStart)
-	fmt.Println(Solve(file, true))
 }

@@ -9,6 +9,18 @@ import (
 	"os"
 )
 
+func main() {
+	file, err := os.Open("2021/day07/input.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	fmt.Println(GetMinCost(file, false))
+	file.Seek(0, io.SeekStart)
+	fmt.Println(GetMinCost(file, true))
+}
+
 func GetMinCost(r io.Reader, adjust bool) int {
 	nums := utils.LoadIntList(r)
 
@@ -60,16 +72,4 @@ func absDif(x int, y int) int {
 		return -diff
 	}
 	return diff
-}
-
-func main() {
-	file, err := os.Open("2021/day07/input.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-
-	fmt.Println(GetMinCost(file, false))
-	file.Seek(0, io.SeekStart)
-	fmt.Println(GetMinCost(file, true))
 }

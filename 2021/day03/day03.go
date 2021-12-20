@@ -10,6 +10,45 @@ import (
 	"strings"
 )
 
+func main() {
+	file, err := os.Open("2021/day03/input.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	lines := loadLines(file)
+	gamma, epsilon := part1MostLeast(lines)
+	fmt.Println(gamma, epsilon)
+	g, err := strconv.ParseInt(gamma, 2, 32)
+	if err != nil {
+		log.Fatal(err)
+	}
+	e, err := strconv.ParseInt(epsilon, 2, 32)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(g * e)
+
+	most, least := part2MostLeast(lines)
+	oxy, err := strconv.ParseInt(most, 2, 32)
+	if err != nil {
+		log.Fatal(err)
+	}
+	co2, err := strconv.ParseInt(least, 2, 32)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(oxy * co2)
+}
+
+func loadLines(r io.Reader) []string {
+	scanner := bufio.NewScanner(r)
+	lines := make([]string, 0)
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text())
+	}
+	return lines
+}
+
 func part1MostLeast(lines []string) (string, string) {
 	mostSb := strings.Builder{}
 	leastSb := strings.Builder{}
@@ -96,48 +135,4 @@ func findLeast(nums []string) string {
 		}
 	}
 	return nums[0]
-}
-
-func remove(nums []string, i int) []string {
-	nums[i] = nums[len(nums)-1]
-	return nums[:len(nums)-1]
-}
-
-func loadLines(r io.Reader) []string {
-	scanner := bufio.NewScanner(r)
-	lines := make([]string, 0)
-	for scanner.Scan() {
-		lines = append(lines, scanner.Text())
-	}
-	return lines
-}
-
-func main() {
-	file, err := os.Open("2021/day03/input.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
-	lines := loadLines(file)
-	gamma, epsilon := part1MostLeast(lines)
-	fmt.Println(gamma, epsilon)
-	g, err := strconv.ParseInt(gamma, 2, 32)
-	if err != nil {
-		log.Fatal(err)
-	}
-	e, err := strconv.ParseInt(epsilon, 2, 32)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(g * e)
-
-	most, least := part2MostLeast(lines)
-	oxy, err := strconv.ParseInt(most, 2, 32)
-	if err != nil {
-		log.Fatal(err)
-	}
-	co2, err := strconv.ParseInt(least, 2, 32)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(oxy * co2)
 }

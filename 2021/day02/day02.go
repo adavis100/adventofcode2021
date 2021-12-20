@@ -23,6 +23,22 @@ type move struct {
 	dist int
 }
 
+func main() {
+	file, err := os.Open("2021/day02/input.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	moves := loadMoves(file)
+
+	hpos, depth := run1(moves)
+	fmt.Println(hpos * depth)
+
+	hpos, depth = run2(moves)
+	fmt.Println(hpos * depth)
+}
+
 func run1(moves []move) (int, int) {
 	hpos := 0
 	depth := 0
@@ -70,20 +86,4 @@ func loadMoves(r io.Reader) []move {
 		moves = append(moves, move{cmd, dist})
 	}
 	return moves
-}
-
-func main() {
-	file, err := os.Open("2021/day02/input.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-
-	moves := loadMoves(file)
-
-	hpos, depth := run1(moves)
-	fmt.Println(hpos * depth)
-
-	hpos, depth = run2(moves)
-	fmt.Println(hpos * depth)
 }

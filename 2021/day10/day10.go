@@ -9,6 +9,18 @@ import (
 	"sort"
 )
 
+func main() {
+	file, err := os.Open("./2021/day10/input.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	fmt.Println(Solve1(file))
+	file.Seek(0, io.SeekStart)
+	fmt.Println(Solve2(file))
+}
+
 func Solve1(r io.Reader) int {
 	scanner := bufio.NewScanner(r)
 	score := 0
@@ -104,16 +116,4 @@ func buildRemainderStack(l string) []rune {
 		}
 	}
 	return stack
-}
-
-func main() {
-	file, err := os.Open("./2021/day10/input.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-
-	fmt.Println(Solve1(file))
-	file.Seek(0, io.SeekStart)
-	fmt.Println(Solve2(file))
 }
