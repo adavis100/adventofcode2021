@@ -31,23 +31,33 @@ func TestInsertions(t *testing.T) {
 	tests := []struct {
 		name string
 		s    string
-		want string
+		n    int
+		want []int64
 	}{
-		{"1", template, "NCNBCHB"},
-		{"2", "NCNBCHB", "NBCCNBBBCBHCB"},
-		{"3", "NBCCNBBBCBHCB", "NBBBCNCCNBBNBNBBCHBHHBCHB"},
+		{"1", template, 1, countChars("NCNBCHB")},
+		{"2", template, 2, countChars("NBCCNBBBCBHCB")},
+		{"3", template, 3, countChars("NBBBCNCCNBBNBNBBCHBHHBCHB")},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.want, doInsertion(test.s, rules))
+			got := doIterations(test.s, test.n, rules)
+			assert.Equal(t, test.want, got)
 		})
 	}
 }
 
+func countChars(s string) []int64 {
+	counts := make([]int64, 26)
+	for _, c := range s {
+		counts[c-'A']++
+	}
+	return counts
+}
+
 func TestExample1(t *testing.T) {
-	assert.Equal(t, 1588, Solve1(strings.NewReader(ex)))
+	assert.Equal(t, int64(1588), Solve(strings.NewReader(ex), 10))
 }
 
 func TestExample2(t *testing.T) {
-	assert.Equal(t, 2188189693529, Solve2(strings.NewReader(ex)))
+	assert.Equal(t, int64(2188189693529), Solve(strings.NewReader(ex), 40))
 }

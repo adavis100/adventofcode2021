@@ -17,23 +17,57 @@ func main() {
 	}
 	defer file.Close()
 
-	fmt.Println(Solve1(file))
+	fmt.Println(Solve(file, 10))
 	file.Seek(0, io.SeekStart)
-	//fmt.Println(Solve2(file))
+	fmt.Println(Solve(file, 40))
 }
 
-func Solve1(r io.Reader) int {
-	return solveIterations(r, 10)
-}
-
-func solveIterations(r io.Reader, iterations int) int {
+func Solve(r io.Reader, iterations int) int64 {
 	template, rules := loadInput(r)
-	cur := template
-	for i := 0; i < iterations; i++ {
-		cur = doInsertion(cur, rules)
-	}
-	most, least := findMostAndLeastCommon(cur)
+
+	counts := doIterations(template, iterations, rules)
+	most, least := findMostAndLeastCommon(counts)
 	return most - least
+}
+
+func doIterations(s string, n int, rules map[string]string) []int64 {
+	polyMap := buildPolyMap(s)
+	for i := 0; i < n; i++ {
+		newPolyMap := make(map[string]int64)
+		for poly, count := range polyMap {
+			if c, ok := rules[poly]; ok {
+				newPolyMap[string(poly[0])+c] += count
+				newPolyMap[c+string(poly[1])] += count
+			}
+		}
+		polyMap = newPolyMap
+	}
+	return getCounts(polyMap, s[0], s[len(s)-1])
+}
+
+func buildPolyMap(s string) map[string]int64 {
+	m := make(map[string]int64)
+	for i := 1; i < len(s); i++ {
+		m[string(s[i-1])+string(s[i])]++
+	}
+	return m
+}
+
+func getCounts(m map[string]int64, first byte, last byte) []int64 {
+	counts := make([]int64, 26)
+	for k, v := range m {
+		counts[k[0]-'A'] += v
+		counts[k[1]-'A'] += v
+	}
+
+	for i := 0; i < len(counts); i++ {
+		counts[i] /= 2
+	}
+
+	counts[first-'A']++
+	counts[last-'A']++
+
+	return counts
 }
 
 func loadInput(r io.Reader) (template string, rules map[string]string) {
@@ -51,34 +85,13 @@ func loadInput(r io.Reader) (template string, rules map[string]string) {
 	return template, rules
 }
 
-func doInsertion(cur string, rules map[string]string) string {
-	sb := strings.Builder{}
-	for i := 1; i < len(cur); i++ {
-		pair := string(cur[i-1]) + string(cur[i])
-		insert := rules[pair]
-		if i == 1 {
-			sb.WriteByte(cur[i-1])
-		}
-		sb.WriteString(insert)
-		sb.WriteByte(cur[i])
-	}
-	return sb.String()
-}
+func findMostAndLeastCommon(counts []int64) (most int64, least int64) {
 
-func findMostAndLeastCommon(cur string) (most int, least int) {
-	elements := make([]int, 26)
-	for i := 0; i < len(cur); i++ {
-		elements[cur[i]-'A']++
-	}
-	sort.Slice(elements, func(i, j int) bool {
-		return elements[i] < elements[j]
+	sort.Slice(counts, func(i, j int) bool {
+		return counts[i] < counts[j]
 	})
-	for i := len(elements) - 1; i >= 0 && elements[i] != 0; i-- {
-		least = elements[i]
+	for i := len(counts) - 1; i >= 0 && counts[i] != 0; i-- {
+		least = counts[i]
 	}
-	return elements[len(elements)-1], least
-}
-
-func Solve2(r io.Reader) int {
-	return solveIterations(r, 40)
+	return counts[len(counts)-1], least
 }
