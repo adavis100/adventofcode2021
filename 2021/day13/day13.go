@@ -133,7 +133,7 @@ func Solve2(r io.Reader) {
 			if grid[i][j] {
 				fmt.Print("#")
 			} else {
-				fmt.Print(".")
+				fmt.Print(" ")
 			}
 		}
 		fmt.Println()
