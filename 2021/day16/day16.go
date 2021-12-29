@@ -146,6 +146,60 @@ func hexToBits(s string) []bool {
 }
 
 func Solve2(r io.Reader) int {
-	fmt.Println("Part 2 unimplemented")
-	return 0
+	bytes, err := ioutil.ReadAll(r)
+	if err != nil {
+		log.Fatal(err)
+	}
+	s := string(bytes)
+	p, _ := parsePacket(hexToBits(s))
+	return evalPacket(p)
+}
+
+func evalPacket(p *packet) int {
+	if p == nil {
+		return 0
+	}
+
+	var n int
+	switch p.pktType {
+	case 0: // sum
+		for _, child := range p.children {
+			n += evalPacket(&child)
+		}
+	case 1: // product
+		n = 1
+		for _, child := range p.children {
+			n *= evalPacket(&child)
+		}
+	case 2: // min
+		n = evalPacket(&p.children[0])
+		for _, child := range p.children {
+			childVal := evalPacket(&child)
+			if childVal < n {
+				n = childVal
+			}
+		}
+	case 3: // max
+		for _, child := range p.children {
+			childVal := evalPacket(&child)
+			if childVal > n {
+				n = childVal
+			}
+		}
+	case 4: // value
+		n = p.num
+	case 5: // greater than
+		if evalPacket(&p.children[0]) > evalPacket(&p.children[1]) {
+			n = 1
+		}
+	case 6: // less than
+		if evalPacket(&p.children[0]) < evalPacket(&p.children[1]) {
+			n = 1
+		}
+	case 7: // equal to
+		if evalPacket(&p.children[0]) == evalPacket(&p.children[1]) {
+			n = 1
+		}
+	}
+	return n
 }
