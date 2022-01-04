@@ -34,7 +34,7 @@ func Solve1(r io.Reader) int {
 		sum = add(sum, loadSnailNum(scanner.Text()))
 	}
 
-	return getMagnitude(sum)
+	return getMagnitude(sum, 0, 0)
 }
 
 func loadSnailNum(s string) *snailnum {
@@ -140,9 +140,15 @@ func explode(sn *snailnum) bool {
 	return changed
 }
 
-func getMagnitude(sn *snailnum) int {
+func getMagnitude(sn *snailnum, i, j int) int {
 	head := sn
+	count := 0
 	for head.next != nil {
+		if count > 1000 {
+			// hmm.... this must be a bug, break to avoid infinite loop
+			fmt.Printf("uh oh!!! (%d, %d) sn=%v\n", i, j, sn)
+			break
+		}
 		for cur := head; cur != nil && cur.next != nil; cur = cur.next {
 			if cur.nest == cur.next.nest {
 				cur.val = 3*cur.val + 2*cur.next.val
@@ -153,10 +159,51 @@ func getMagnitude(sn *snailnum) int {
 				}
 			}
 		}
+		count++
 	}
-	return sn.val
+	return head.val
 }
 
 func Solve2(r io.Reader) int {
-	return 0
+	scanner := bufio.NewScanner(r)
+	nums := make([]*snailnum, 0)
+
+	for scanner.Scan() {
+		nums = append(nums, loadSnailNum(scanner.Text()))
+	}
+
+	max := 0
+	for i := 0; i < len(nums); i++ {
+		for j := 0; j < len(nums); j++ {
+			if i == 8 && j == 0 {
+				fmt.Println("break")
+			}
+			if i != j {
+				sum := add(copysn(nums[i]), copysn(nums[j]))
+				mag := getMagnitude(sum, i, j)
+				if mag > max {
+					max = mag
+				}
+			}
+		}
+	}
+
+	return max
+}
+
+func copysn(sn *snailnum) *snailnum {
+
+	var cur, head, prev *snailnum
+	for ; sn != nil; sn = sn.next {
+		cur = &snailnum{prev: prev, val: sn.val, nest: sn.nest}
+		if head == nil {
+			head = cur
+		}
+		if prev != nil {
+			prev.next = cur
+		}
+		prev = cur
+	}
+
+	return head
 }

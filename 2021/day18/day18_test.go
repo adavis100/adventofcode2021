@@ -74,8 +74,7 @@ func TestAddition(t *testing.T) {
 	}
 }
 
-func TestSolve1(t *testing.T) {
-	ex := `[[[0,[5,8]],[[1,7],[9,6]]],[[4,[1,2]],[[1,4],2]]]
+var ex = `[[[0,[5,8]],[[1,7],[9,6]]],[[4,[1,2]],[[1,4],2]]]
 [[[5,[2,8]],4],[5,[[9,9],0]]]
 [6,[[[6,2],[5,6]],[[7,6],[4,7]]]]
 [[[6,[0,7]],[0,9]],[4,[9,[9,0]]]]
@@ -85,6 +84,8 @@ func TestSolve1(t *testing.T) {
 [[9,3],[[9,9],[6,[4,9]]]]
 [[2,[[7,7],7]],[[5,8],[[9,3],[0,2]]]]
 [[[[5,2],5],[8,[3,7]]],[[5,[7,5]],[4,4]]]`
+
+func TestSolve1(t *testing.T) {
 	assert.Equal(t, 4140, Solve1(strings.NewReader(ex)))
 }
 
@@ -103,7 +104,11 @@ func TestGetMagnitude(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equalf(t, tt.want, getMagnitude(tt.sn), "getMagnitude(%v)", tt.sn)
+			assert.Equalf(t, tt.want, getMagnitude(tt.sn, 0, 0), "getMagnitude(%v)", tt.sn)
 		})
 	}
+}
+
+func TestSolve2(t *testing.T) {
+	assert.Equal(t, 3993, Solve2(strings.NewReader(ex)))
 }
